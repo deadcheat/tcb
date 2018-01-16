@@ -4,10 +4,13 @@ import (
 	"github.com/couchbase/gocb"
 )
 
-// CouchBaseAdapter CouchBase connect Adapter
+// Configurable governs for configure and open connect
 type CouchBaseAdapter interface {
-	Configurable
-	Operatable
+	Open() error
+	Cluster() *gocb.Cluster
+	AddBucket(name string) (*gocb.Bucket, error)
+	Bucket(name string) (*gocb.Bucket, error)
+	Operator(name string) (Operatable, error)
 }
 
 // Operatable abstracted for operating on couchbase
@@ -18,15 +21,6 @@ type Operatable interface {
 	Remove(key string) (gocb.Cas, error)
 	N1qlQuery(q string, params interface{}) (gocb.QueryResults, error)
 	N1qlQueryWithMode(mode *gocb.ConsistencyMode, q string, params interface{}) (gocb.QueryResults, error)
-}
-
-// Configurable governs for configure and open connect
-type Configurable interface {
-	Open() error
-	Config() *Config
-	Cluster() *gocb.Cluster
-	AddBucket(name string) (*gocb.Bucket, error)
-	Bucket(name string) (*gocb.Bucket, error)
 }
 
 // Loggerable logging interface

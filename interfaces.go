@@ -6,10 +6,11 @@ import (
 
 // CouchBaseAdaptor CouchBase connect adaptor
 type CouchBaseAdaptor interface {
-	Open() error
+	Open() (*gocb.Cluster, error)
 	Env() *Config
 	Cluster() *gocb.Cluster
-	Bucket() *gocb.Bucket
+	AddBucket(name string) (*gocb.Bucket, error)
+	Bucket(name string) (*gocb.Bucket, error)
 	Get(key string, data interface{}) (gocb.Cas, error)
 	Insert(key string, data interface{}, expire uint32) (gocb.Cas, error)
 	Upsert(key string, data interface{}, expire uint32) (gocb.Cas, error)

@@ -4,8 +4,8 @@ import (
 	"github.com/couchbase/gocb"
 )
 
-// CouchBaseAdaptor CouchBase connect adaptor
-type CouchBaseAdaptor interface {
+// CouchBaseAdapter CouchBase connect Adapter
+type CouchBaseAdapter interface {
 	Configurable
 	Operatable
 }

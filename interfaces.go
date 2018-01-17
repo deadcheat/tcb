@@ -4,13 +4,18 @@ import (
 	"github.com/couchbase/gocb"
 )
 
-// Configurable governs for configure and open connect
+// CouchBaseAdapter CouchBase connect Adapter
 type CouchBaseAdapter interface {
+	Configurable
+}
+
+// Configurable governs for configure and open connect
+type Configurable interface {
 	Open() error
 	Cluster() *gocb.Cluster
-	AddBucket(name string) (*gocb.Bucket, error)
+	AddBucket(bucket, password string) (*gocb.Bucket, error)
 	Bucket(name string) (*gocb.Bucket, error)
-	Operator(name string) (Operatable, error)
+	Operator(bucketName string) (Operatable, error)
 }
 
 // Operatable abstracted for operating on couchbase

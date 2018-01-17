@@ -16,8 +16,9 @@ type ClusterConfig struct {
 	User          string
 	Password      string
 	BucketConfigs []BucketConfig
-	cluster       *gocb.Cluster
-	bucketMap     map[string]*gocb.Bucket
+	Loggerable
+	cluster   *gocb.Cluster
+	bucketMap map[string]*gocb.Bucket
 }
 
 // BucketConfig tuple for bucket connection
@@ -28,7 +29,7 @@ type BucketConfig struct {
 
 // NewClusterConfig return new instance
 func NewClusterConfig() *ClusterConfig {
-	return &ClusterConfig{}
+	return &ClusterConfig{Loggerable: NewDefaultLogger(true)}
 }
 
 // Open call this to open cluster connection
@@ -77,5 +78,5 @@ func (a *ClusterConfig) Operator(bucket string) (Operatable, error) {
 	if b == nil {
 		return nil, ErrBucketMissing
 	}
-	return NewBucketOperator(b), nil
+	return NewBucketOperator(b, a.Loggerable), nil
 }

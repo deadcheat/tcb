@@ -7,6 +7,7 @@ import (
 // CouchBaseAdapter CouchBase connect Adapter
 type CouchBaseAdapter interface {
 	Configurable
+	Loggerable
 }
 
 // Configurable governs for configure and open connect

@@ -7,24 +7,25 @@ import (
 // BucketOperator operatable instance
 type BucketOperator struct {
 	Bucket *gocb.Bucket
+	Loggerable
 }
 
-func NewBucketOperator(b *gocb.Bucket) *BucketOperator {
-	return &BucketOperator{b}
+func NewBucketOperator(b *gocb.Bucket, l Loggerable) *BucketOperator {
+	return &BucketOperator{b, l}
 }
 
 // Get invoke gocb.a.Bucket.Get
 func (b *BucketOperator) Get(key string) (cas gocb.Cas, data interface{}, err error) {
-	if a == nil || a.CouchBucket == nil {
-		a.Logf("CouchBase Connections may not be establlished. skip this process.")
+	if b == nil || b.Bucket == nil {
+		b.Logf("CouchBase Connections may not be establlished. skip this process.")
 		return 0, nil, nil
 	}
-	bucket := a.Bucket
+	bucket := b.Bucket
 	cas, err = bucket.Get(key, data)
 	if err != nil {
-		a.Logf("Didn't hit any data for key: %s or err: %+v \n", key, err)
+		b.Logf("Didn't hit any data for key: %s or err: %+v \n", key, err)
 		return cas, nil, err
 	}
-	a.Logf("hit key: %s", key)
+	b.Logf("hit key: %s", key)
 	return cas, data, nil
 }

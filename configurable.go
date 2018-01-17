@@ -6,7 +6,7 @@ import (
 	"github.com/couchbase/gocb"
 )
 
-const (
+var (
 	ErrBucketMissing error = errors.New("bucket is missing")
 )
 

@@ -78,5 +78,6 @@ func (a *ClusterConfig) Operator(bucket string) (Operatable, error) {
 	if b == nil {
 		return nil, ErrBucketMissing
 	}
+
 	return NewBucketOperator(b, a.Loggerable), nil
 }

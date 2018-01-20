@@ -1,6 +1,9 @@
 package tcb
 
 import (
+	"errors"
+	"log"
+
 	"github.com/couchbase/gocb"
 )
 
@@ -14,18 +17,84 @@ func NewBucketOperator(b *gocb.Bucket, l Loggerable) *BucketOperator {
 	return &BucketOperator{b, l}
 }
 
-// Get invoke gocb.a.Bucket.Get
-func (b *BucketOperator) Get(key string) (cas gocb.Cas, data interface{}, err error) {
+// Get invoke gocb.Bucket.Get
+func (b *BucketOperator) Get(key string, data interface{}) (cas gocb.Cas, err error) {
 	if b == nil || b.Bucket == nil {
 		b.Logf("CouchBase Connections may not be establlished. skip this process.")
-		return 0, nil, nil
+		return 0, nil
 	}
 	bucket := b.Bucket
 	cas, err = bucket.Get(key, data)
 	if err != nil {
 		b.Logf("Didn't hit any data for key: %s or err: %+v \n", key, err)
-		return cas, nil, err
+		return cas, err
 	}
 	b.Logf("hit key: %s", key)
-	return cas, data, nil
+	return cas, nil
+}
+
+// Insert invoke gocb.Bucket.Insert
+func (b *BucketOperator) Insert(k string, d interface{}, e uint32) (gocb.Cas, error) {
+	return b.update(insert, k, d, e)
+}
+
+// Upsert invoke gocb.Bucket.Upsert
+func (b *BucketOperator) Upsert(k string, d interface{}, e uint32) (gocb.Cas, error) {
+	return b.update(upsert, k, d, e)
+}
+
+type updateMode int
+
+const (
+	insert updateMode = iota
+	upsert
+)
+
+func (b *BucketOperator) update(mode updateMode, key string, data interface{}, expire uint32) (c gocb.Cas, e error) {
+	if b == nil || b.Bucket == nil {
+		return 0, nil
+	}
+	bucket := *b.Bucket
+	if mode == insert {
+		c, e = bucket.Insert(key, data, expire)
+	} else if mode == upsert {
+		c, e = bucket.Upsert(key, data, expire)
+	} else {
+		log.Fatal(errors.New("update should not call insert or upsert mode"))
+	}
+	if e != nil {
+		b.Logf("Couldn't send data for key: %s or err: %+v \n", key, e)
+		return c, e
+	}
+	b.Logf("sent data to b.CouchBucket key: %s", key)
+	return c, nil
+}
+
+// N1qlQuery prepare query and execute
+func (b *BucketOperator) N1qlQuery(q string, params interface{}) (r gocb.QueryResults, err error) {
+	return b.N1qlQueryWithMode(nil, q, params)
+}
+
+// Remove remove data
+func Remove(key string) (gocb.Cas, error) {
+	return nil, nil
+}
+
+// N1qlQuery prepare query and execute
+func (b *BucketOperator) N1qlQueryWithMode(m *gocb.ConsistencyMode, q string, params interface{}) (r gocb.QueryResults, err error) {
+	if b == nil || b.Bucket == nil {
+		return nil, nil
+	}
+	nq := gocb.NewN1qlQuery(q)
+	if m != nil {
+		nq.Consistency(*m)
+	}
+	bucket := *b.Bucket
+	r, err = bucket.ExecuteN1qlQuery(nq, params)
+	if err != nil {
+		b.Logf("Couldn't execute query for query: %s params: %+v or err: %+v \n", q, params, err)
+		return r, err
+	}
+	b.Logf("succeeded to execute query: %s , params: %+v", q, params)
+	return r, err
 }

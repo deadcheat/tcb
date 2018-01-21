@@ -16,8 +16,18 @@ type DefaultLogger struct {
 	enabled bool
 }
 
-// NewDefaultLogger Generate New Logger
-func NewDefaultLogger(enabled bool) Loggerable {
+// NewDefaultDisabledLogger Generate New Silent Logger
+func NewDefaultDisabledLogger() Loggerable {
+	return newDefaultLogger(false)
+}
+
+// NewDefaultActiveLogger Generate New Silent Logger
+func NewDefaultActiveLogger() Loggerable {
+	return newDefaultLogger(false)
+}
+
+// newDefaultLogger Generate New Logger
+func newDefaultLogger(enabled bool) Loggerable {
 	return &DefaultLogger{
 		enabled: enabled,
 	}

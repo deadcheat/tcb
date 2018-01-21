@@ -34,12 +34,12 @@ func (b *BucketOperator) Get(key string, data interface{}) (cas gocb.Cas, err er
 }
 
 // Insert invoke gocb.Bucket.Insert
-func (b *BucketOperator) Insert(k string, d interface{}, e uint32) (gocb.Cas, error) {
+func (b *BucketOperator) Insert(k string, d interface{}, e uint32) (cas gocb.Cas, err error) {
 	return b.update(insert, k, d, e)
 }
 
 // Upsert invoke gocb.Bucket.Upsert
-func (b *BucketOperator) Upsert(k string, d interface{}, e uint32) (gocb.Cas, error) {
+func (b *BucketOperator) Upsert(k string, d interface{}, e uint32) (cas gocb.Cas, err error) {
 	return b.update(upsert, k, d, e)
 }
 
@@ -50,24 +50,24 @@ const (
 	upsert
 )
 
-func (b *BucketOperator) update(mode updateMode, key string, data interface{}, expire uint32) (c gocb.Cas, e error) {
+func (b *BucketOperator) update(mode updateMode, key string, data interface{}, expire uint32) (cas gocb.Cas, err error) {
 	if b == nil || b.Bucket == nil {
 		return 0, nil
 	}
 	bucket := *b.Bucket
 	if mode == insert {
-		c, e = bucket.Insert(key, data, expire)
+		cas, err = bucket.Insert(key, data, expire)
 	} else if mode == upsert {
-		c, e = bucket.Upsert(key, data, expire)
+		cas, err = bucket.Upsert(key, data, expire)
 	} else {
 		log.Fatal(errors.New("update should not call insert or upsert mode"))
 	}
-	if e != nil {
-		b.Logf("Couldn't send data for key: %s or err: %+v \n", key, e)
-		return c, e
+	if err != nil {
+		b.Logf("Couldn't send data for key: %s or err: %+v \n", key, err)
+		return cas, err
 	}
 	b.Logf("sent data to b.CouchBucket key: %s", key)
-	return c, nil
+	return cas, nil
 }
 
 // N1qlQuery prepare query and execute
@@ -76,8 +76,16 @@ func (b *BucketOperator) N1qlQuery(q string, params interface{}) (r gocb.QueryRe
 }
 
 // Remove remove data
-func Remove(key string) (gocb.Cas, error) {
-	return nil, nil
+func (b *BucketOperator) Remove(key string) (cas gocb.Cas, err error) {
+	var dummy []byte
+	bucket := b.Bucket
+	if cas, err = bucket.Get(key, &dummy); err != nil {
+		return cas, err
+	}
+	if cas, err = bucket.Remove(key, cas); err != nil {
+		b.Logf("Couldn't remove any data for key: %s by err: %+v \n", key, err)
+	}
+	return cas, nil
 }
 
 // N1qlQuery prepare query and execute

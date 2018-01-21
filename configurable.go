@@ -29,7 +29,7 @@ type BucketConfig struct {
 
 // NewClusterConfig return new instance
 func NewClusterConfig() *ClusterConfig {
-	return &ClusterConfig{Loggerable: NewDefaultLogger(true)}
+	return &ClusterConfig{Loggerable: NewDefaultActiveLogger()}
 }
 
 // Open call this to open cluster connection

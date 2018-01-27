@@ -2,8 +2,8 @@ version: '3'
 
 services:
   tcb_test_couch1:
-    container_name: "shiningwizard_couch"
-    image: deadcheat/couchbase
+    container_name: "tcb_test_couch1"
+    image: deadcheat/couchbase:latest
     deploy:
       replicas: 1
     environment:
@@ -12,14 +12,12 @@ services:
     ports:
       - 8091:8091
   tcb_test_couch2:
-    container_name: "shiningwizard_couch"
-    image: deadcheat/couchbase
+    container_name: "tcb_test_couch2"
+    image: deadcheat/couchbase:latest
     deploy:
       replicas: 1
     environment:
       BUCKET_NAME: "default"
       BUCKET_PASSWORD: "test"
-      USER: "adminisgtrator"
-      PASSWORD: "password"
     ports:
       - 18091:8091

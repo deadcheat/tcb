@@ -8,16 +8,6 @@ services:
       replicas: 1
     environment:
       BUCKET_NAME: "default"
-      BUCKET_PASSWORD: "test"
+      # BUCKET_PASSWORD: "test"
     ports:
       - 8091:8091
-  tcb_test_couch2:
-    container_name: "tcb_test_couch2"
-    image: deadcheat/couchbase:latest
-    deploy:
-      replicas: 1
-    environment:
-      BUCKET_NAME: "default"
-      BUCKET_PASSWORD: "test"
-    ports:
-      - 18091:8091

@@ -10,12 +10,17 @@ var (
 	ErrBucketMissing error = errors.New("bucket is missing")
 )
 
-// ClusterConfig to connect couchbase
-type ClusterConfig struct {
+// Configure struct for config
+type Configure struct {
 	ConnectString string
 	User          string
 	Password      string
 	BucketConfigs []BucketConfig
+}
+
+// Cluster to connect couchbase
+type Cluster struct {
+	Configure
 	Loggerable
 	cluster   *gocb.Cluster
 	bucketMap map[string]*gocb.Bucket
@@ -27,34 +32,40 @@ type BucketConfig struct {
 	Password string
 }
 
-// NewClusterConfig return new instance
-func NewClusterConfig() *ClusterConfig {
-	return &ClusterConfig{Loggerable: NewDefaultActiveLogger()}
+// NewCluster return new instance
+func NewCluster(c Configure) *Cluster {
+	bm := make(map[string]*gocb.Bucket)
+	return &Cluster{Configure: c, Loggerable: NewDefaultActiveLogger(), bucketMap: bm}
 }
 
 // Open call this to open cluster connection
-func (a *ClusterConfig) Open() error {
+func (a *Cluster) Open() error {
 	cluster, err := gocb.Connect(a.ConnectString)
-	if err == gocb.ErrAuthError {
-		err = cluster.Authenticate(gocb.PasswordAuthenticator{
+	if err != nil {
+		return err
+	}
+	if a.User != "" {
+		_ = cluster.Authenticate(gocb.PasswordAuthenticator{
 			Username: a.User,
 			Password: a.Password,
 		})
 	}
-	if err != nil {
-		return err
-	}
 	a.cluster = cluster
+	for _, b := range a.BucketConfigs {
+		if _, err := a.AddBucket(b.Name, b.Password); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 // Cluster return inner cluster instance
-func (a *ClusterConfig) Cluster() *gocb.Cluster {
+func (a *Cluster) Cluster() *gocb.Cluster {
 	return a.cluster
 }
 
 // AddBucket add a bucket to
-func (a *ClusterConfig) AddBucket(bucket, password string) (*gocb.Bucket, error) {
+func (a *Cluster) AddBucket(bucket, password string) (*gocb.Bucket, error) {
 	if b, ok := a.bucketMap[bucket]; ok {
 		return b, nil
 	}
@@ -67,13 +78,13 @@ func (a *ClusterConfig) AddBucket(bucket, password string) (*gocb.Bucket, error)
 }
 
 // Bucket return from bucketmap
-func (a *ClusterConfig) Bucket(bucket string) *gocb.Bucket {
+func (a *Cluster) Bucket(bucket string) *gocb.Bucket {
 	b, _ := a.bucketMap[bucket]
 	return b
 }
 
 // Operator return operator instance
-func (a *ClusterConfig) Operator(bucket string) (Operatable, error) {
+func (a *Cluster) Operator(bucket string) (Operatable, error) {
 	b := a.Bucket(bucket)
 	if b == nil {
 		return nil, ErrBucketMissing

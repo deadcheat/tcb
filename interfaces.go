@@ -15,7 +15,7 @@ type Configurable interface {
 	Open() error
 	Cluster() *gocb.Cluster
 	AddBucket(bucket, password string) (*gocb.Bucket, error)
-	Bucket(name string) (*gocb.Bucket, error)
+	Bucket(name string) *gocb.Bucket
 	Operator(bucketName string) (Operatable, error)
 }
 

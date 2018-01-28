@@ -78,9 +78,9 @@ func (b *BucketOperator) N1qlQuery(q string, params interface{}) (r gocb.QueryRe
 
 // Remove remove data
 func (b *BucketOperator) Remove(key string) (cas gocb.Cas, err error) {
-	var dummy []byte
+	var dummy interface{}
 	bucket := b.Bucket
-	if cas, err = bucket.Get(key, &dummy); err != nil {
+	if cas, err = bucket.Get(key, dummy); err != nil {
 		return cas, err
 	}
 	if cas, err = bucket.Remove(key, cas); err != nil {

@@ -1,4 +1,6 @@
 # tcb
+[![GoDoc](https://godoc.org/github.com/deadcheat/tcb?status.svg)](https://godoc.org/github.com/deadcheat/tcb)
+
 takin' care of business
 
 ![1rqml0](https://user-images.githubusercontent.com/2797681/34908037-93dbb5fe-f8cc-11e7-82fb-cf60a2da6234.gif)

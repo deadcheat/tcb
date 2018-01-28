@@ -1,7 +1,6 @@
 package tcb
 
 import (
-	"errors"
 	"log"
 
 	"github.com/couchbase/gocb"
@@ -21,7 +20,7 @@ func NewBucketOperator(b *gocb.Bucket, l Loggerable) *BucketOperator {
 // Get invoke gocb.Bucket.Get
 func (b *BucketOperator) Get(key string, data interface{}) (cas gocb.Cas, err error) {
 	if b == nil || b.Bucket == nil {
-		b.Logf("CouchBase Connections may not be establlished. skip this process.")
+		log.Printf("CouchBase Connections may not be establlished. skip this process.")
 		return 0, nil
 	}
 	bucket := b.Bucket
@@ -52,16 +51,12 @@ const (
 )
 
 func (b *BucketOperator) update(mode updateMode, key string, data interface{}, expire uint32) (cas gocb.Cas, err error) {
-	if b == nil || b.Bucket == nil {
-		return 0, nil
-	}
 	bucket := *b.Bucket
-	if mode == insert {
+	switch mode {
+	case insert:
 		cas, err = bucket.Insert(key, data, expire)
-	} else if mode == upsert {
+	case upsert:
 		cas, err = bucket.Upsert(key, data, expire)
-	} else {
-		log.Fatal(errors.New("update should not call insert or upsert mode"))
 	}
 	if err != nil {
 		b.Logf("Couldn't send data for key: %s or err: %+v \n", key, err)

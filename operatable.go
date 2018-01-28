@@ -13,6 +13,7 @@ type BucketOperator struct {
 	Loggerable
 }
 
+// NewBucketOperator return new operatable instance
 func NewBucketOperator(b *gocb.Bucket, l Loggerable) *BucketOperator {
 	return &BucketOperator{b, l}
 }

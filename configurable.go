@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	// ErrBucketMissing Constant error for Missing bucket
 	ErrBucketMissing error = errors.New("bucket is missing")
 )
 

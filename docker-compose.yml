@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  tcb_test_couch1:
+  tcb_test_couch:
     container_name: "tcb_test_couch1"
     image: deadcheat/couchbase:latest
     deploy:

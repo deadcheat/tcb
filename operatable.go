@@ -86,10 +86,7 @@ func (b *BucketOperator) Remove(key string) (cas gocb.Cas, err error) {
 	if cas, err = bucket.Get(key, dummy); err != nil {
 		return cas, err
 	}
-	if cas, err = bucket.Remove(key, cas); err != nil {
-		b.Logf("Couldn't remove any data for key: %s by err: %+v \n", key, err)
-	}
-	return cas, nil
+	return bucket.Remove(key, cas)
 }
 
 // N1qlQuery prepare query and execute

@@ -62,7 +62,32 @@ func TestInsertAndUpsert(t *testing.T) {
 	t.Log("=== Case 4. Upsert/Insert return error when nil operator")
 	var o_nil *tcb.BucketOperator
 	if _, err := o_nil.Upsert(testKey, upsertData, 0); err != tcb.ErrOperationUnenforceable {
-		t.Error("Get should return error but not returned or is not ErrOperationUnenforceable", err)
+		t.Error("Upsert/Insert should return error but not returned or is not ErrOperationUnenforceable", err)
+		t.Fail()
+	}
+	_, _ = o.Remove(testKey)
+}
+
+func TestRemove(t *testing.T) {
+	t.Log("=== Case 1. Remove sucesses to remove")
+	o := prepareOperator()
+
+	testKey := "test3"
+	testData := 1000
+	_, _ = o.Insert(testKey, testData, 0)
+	if _, err := o.Remove(testKey); err != nil {
+		t.Error("Remove should not return error but returned ", err)
+		t.Fail()
+	}
+	t.Log("=== Case 2. Remove failed to remove when data has been removed already")
+	if _, err := o.Remove(testKey); err == nil {
+		t.Error("Remove should return error but not returned ")
+		t.Fail()
+	}
+	t.Log("=== Case 3. Remove return error when nil operator")
+	var o_nil *tcb.BucketOperator
+	if _, err := o_nil.Remove(testKey); err != tcb.ErrOperationUnenforceable {
+		t.Error("Remove should return error but not returned or is not ErrOperationUnenforceable", err)
 		t.Fail()
 	}
 	_, _ = o.Remove(testKey)

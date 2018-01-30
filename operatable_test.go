@@ -93,7 +93,33 @@ func TestRemove(t *testing.T) {
 	_, _ = o.Remove(testKey)
 }
 
+func TestN1qlQuery(t *testing.T) {
+	t.Log("=== Case 1. N1qlQuery sucesses to execute query")
+	c := prepareCluster()
+	b := c.Bucket("default")
+	if err := b.Manager("", "").CreatePrimaryIndex("", true, false); err != nil {
+		t.Error("prepare primary index failed")
+		t.Fail()
+	}
+	o := tcb.NewBucketOperator(b, tcb.NewDefaultActiveLogger())
+
+	testKey := "test4"
+	testData := 1000
+	_, _ = o.Insert(testKey, testData, 0)
+
+	if _, err := o.N1qlQuery("SELECT * FROM default d WHERE meta(d).id = $1", []interface{}{testKey}); err != nil {
+		t.Error("N1qlQuery should not return error but returned ", err)
+		t.Fail()
+	}
+	_, _ = o.Remove(testKey)
+}
 func prepareOperator() tcb.Operatable {
+	c := prepareCluster()
+	o, _ := c.Operator("default")
+	return o
+}
+
+func prepareCluster() *tcb.Cluster {
 	config := tcb.Configure{
 		ConnectString: "http://localhost:8091",
 		BucketConfigs: []tcb.BucketConfig{
@@ -107,6 +133,5 @@ func prepareOperator() tcb.Operatable {
 	}
 	c := tcb.NewCluster(config)
 	_ = c.Open()
-	o, _ := c.Operator("default")
-	return o
+	return c
 }

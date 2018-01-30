@@ -1,7 +1,7 @@
 package tcb
 
 import (
-	"log"
+	"errors"
 
 	"github.com/couchbase/gocb"
 )
@@ -17,11 +17,13 @@ func NewBucketOperator(b *gocb.Bucket, l Loggerable) *BucketOperator {
 	return &BucketOperator{b, l}
 }
 
+// ErrOperationUnenforceable returns this error if operator is nil
+var ErrOperationUnenforceable = errors.New("operator is nil or not enabled")
+
 // Get invoke gocb.Bucket.Get
 func (b *BucketOperator) Get(key string, data interface{}) (cas gocb.Cas, err error) {
 	if b == nil || b.Bucket == nil {
-		log.Printf("CouchBase Connections may not be establlished. skip this process.")
-		return 0, nil
+		return 0, ErrOperationUnenforceable
 	}
 	bucket := b.Bucket
 	cas, err = bucket.Get(key, data)
@@ -51,6 +53,9 @@ const (
 )
 
 func (b *BucketOperator) update(mode updateMode, key string, data interface{}, expire uint32) (cas gocb.Cas, err error) {
+	if b == nil || b.Bucket == nil {
+		return 0, ErrOperationUnenforceable
+	}
 	bucket := *b.Bucket
 	switch mode {
 	case insert:
@@ -73,6 +78,9 @@ func (b *BucketOperator) N1qlQuery(q string, params interface{}) (r gocb.QueryRe
 
 // Remove remove data
 func (b *BucketOperator) Remove(key string) (cas gocb.Cas, err error) {
+	if b == nil || b.Bucket == nil {
+		return cas, ErrOperationUnenforceable
+	}
 	var dummy interface{}
 	bucket := b.Bucket
 	if cas, err = bucket.Get(key, dummy); err != nil {
@@ -87,7 +95,7 @@ func (b *BucketOperator) Remove(key string) (cas gocb.Cas, err error) {
 // N1qlQuery prepare query and execute
 func (b *BucketOperator) N1qlQueryWithMode(m *gocb.ConsistencyMode, q string, params interface{}) (r gocb.QueryResults, err error) {
 	if b == nil || b.Bucket == nil {
-		return nil, nil
+		return nil, ErrOperationUnenforceable
 	}
 	nq := gocb.NewN1qlQuery(q)
 	if m != nil {

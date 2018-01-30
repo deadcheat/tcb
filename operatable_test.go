@@ -10,7 +10,7 @@ func TestGet(t *testing.T) {
 	t.Log("=== Case 1. return error when key did not hit")
 	o := prepareOperator()
 
-	testKey := "test"
+	testKey := "test1"
 	var dummy interface{}
 	if _, err := o.Get(testKey, dummy); err == nil {
 		t.Error("Get should return error but not returned")
@@ -36,6 +36,36 @@ func TestGet(t *testing.T) {
 		t.Error("Get should return error but not returned")
 		t.Fail()
 	}
+}
+
+func TestInsertAndUpsert(t *testing.T) {
+	t.Log("=== Case 1. Insert sucesses to insert")
+	o := prepareOperator()
+
+	testKey := "test2"
+	testData := 1000
+	if _, err := o.Insert(testKey, testData, 0); err != nil {
+		t.Error("Insert should not return error but returned ", err)
+		t.Fail()
+	}
+	t.Log("=== Case 2. Insert failed to insert when key is duplicated")
+	if _, err := o.Insert(testKey, testData, 0); err == nil {
+		t.Error("Insert should return error but not returned ")
+		t.Fail()
+	}
+	t.Log("=== Case 3. Upsert sucesses to upsert data")
+	upsertData := 2000
+	if _, err := o.Upsert(testKey, upsertData, 0); err != nil {
+		t.Error("Insert should not return error but returned ", err)
+		t.Fail()
+	}
+	t.Log("=== Case 4. Upsert/Insert return error when nil operator")
+	var o_nil *tcb.BucketOperator
+	if _, err := o_nil.Upsert(testKey, upsertData, 0); err != tcb.ErrOperationUnenforceable {
+		t.Error("Get should return error but not returned or is not ErrOperationUnenforceable", err)
+		t.Fail()
+	}
+	_, _ = o.Remove(testKey)
 }
 
 func prepareOperator() tcb.Operatable {

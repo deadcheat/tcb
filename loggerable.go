@@ -6,10 +6,18 @@ import "log"
 type SilentLogger struct{}
 
 // Log but say nothing
-func (s *SilentLogger) Log(v ...interface{}) {}
+func (s *SilentLogger) Log(v ...interface{}) {
+	if s == nil {
+		return
+	}
+}
 
 // Logf but say nothing with format either
-func (s *SilentLogger) Logf(f string, v ...interface{}) {}
+func (s *SilentLogger) Logf(f string, v ...interface{}) {
+	if s == nil {
+		return
+	}
+}
 
 // DefaultLogger type-default logger
 type DefaultLogger struct {
@@ -35,6 +43,9 @@ func newDefaultLogger(enabled bool) Loggerable {
 
 // LogEnabled return Log-enabled or not
 func (d *DefaultLogger) LogEnabled() bool {
+	if d == nil {
+		return false
+	}
 	return d.enabled
 }
 

@@ -3,6 +3,8 @@ package tcb_test
 import (
 	"testing"
 
+	"github.com/couchbase/gocb"
+
 	"github.com/deadcheat/tcb"
 )
 
@@ -109,6 +111,12 @@ func TestN1qlQuery(t *testing.T) {
 
 	if _, err := o.N1qlQuery("SELECT * FROM default d WHERE meta(d).id = $1", []interface{}{testKey}); err != nil {
 		t.Error("N1qlQuery should not return error but returned ", err)
+		t.Fail()
+	}
+	t.Log("=== Case 3. N1qlQueryWithMode return error when nil operator")
+	var o_nil *tcb.BucketOperator
+	if _, err := o_nil.N1qlQueryWithMode(gocb.RequestPlus, "SELECT * FROM default d WHERE meta(d).id = $1", []interface{}{testKey}); err != tcb.ErrOperationUnenforceable {
+		t.Error("Remove should return error but not returned or is not ErrOperationUnenforceable", err)
 		t.Fail()
 	}
 	_, _ = o.Remove(testKey)

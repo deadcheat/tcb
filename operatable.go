@@ -52,6 +52,10 @@ const (
 	upsert
 )
 
+const (
+	ConsistencyModeNone = gocb.ConsistencyMode(-1)
+)
+
 func (b *BucketOperator) update(mode updateMode, key string, data interface{}, expire uint32) (cas gocb.Cas, err error) {
 	if b == nil || b.Bucket == nil {
 		return 0, ErrOperationUnenforceable
@@ -73,7 +77,7 @@ func (b *BucketOperator) update(mode updateMode, key string, data interface{}, e
 
 // N1qlQuery prepare query and execute
 func (b *BucketOperator) N1qlQuery(q string, params interface{}) (r gocb.QueryResults, err error) {
-	return b.N1qlQueryWithMode(nil, q, params)
+	return b.N1qlQueryWithMode(ConsistencyModeNone, q, params)
 }
 
 // Remove remove data
@@ -90,13 +94,13 @@ func (b *BucketOperator) Remove(key string) (cas gocb.Cas, err error) {
 }
 
 // N1qlQuery prepare query and execute
-func (b *BucketOperator) N1qlQueryWithMode(m *gocb.ConsistencyMode, q string, params interface{}) (r gocb.QueryResults, err error) {
+func (b *BucketOperator) N1qlQueryWithMode(m gocb.ConsistencyMode, q string, params interface{}) (r gocb.QueryResults, err error) {
 	if b == nil || b.Bucket == nil {
 		return nil, ErrOperationUnenforceable
 	}
 	nq := gocb.NewN1qlQuery(q)
-	if m != nil {
-		nq.Consistency(*m)
+	if m != ConsistencyModeNone {
+		nq.Consistency(m)
 	}
 	bucket := *b.Bucket
 	r, err = bucket.ExecuteN1qlQuery(nq, params)

@@ -26,7 +26,7 @@ type Operatable interface {
 	Upsert(key string, data interface{}, expire uint32) (gocb.Cas, error)
 	Remove(key string) (gocb.Cas, error)
 	N1qlQuery(q string, params interface{}) (gocb.QueryResults, error)
-	N1qlQueryWithMode(mode *gocb.ConsistencyMode, q string, params interface{}) (gocb.QueryResults, error)
+	N1qlQueryWithMode(mode gocb.ConsistencyMode, q string, params interface{}) (gocb.QueryResults, error)
 }
 
 // Loggerable logging interface

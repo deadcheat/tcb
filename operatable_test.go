@@ -108,15 +108,27 @@ func TestN1qlQuery(t *testing.T) {
 	testKey := "test4"
 	testData := 1000
 	_, _ = o.Insert(testKey, testData, 0)
-
 	if _, err := o.N1qlQuery("SELECT * FROM default d WHERE meta(d).id = $1", []interface{}{testKey}); err != nil {
 		t.Error("N1qlQuery should not return error but returned ", err)
 		t.Fail()
 	}
+
+	t.Log("=== Case 2. N1qlQueryWithMode sucesses to execute query")
+	if _, err := o.N1qlQueryWithMode(gocb.RequestPlus, "SELECT * FROM default d WHERE meta(d).id = $1", []interface{}{testKey}); err != nil {
+		t.Error("N1qlQuery should not return error but returned ", err)
+		t.Fail()
+	}
+
 	t.Log("=== Case 3. N1qlQueryWithMode return error when nil operator")
 	var o_nil *tcb.BucketOperator
 	if _, err := o_nil.N1qlQueryWithMode(gocb.RequestPlus, "SELECT * FROM default d WHERE meta(d).id = $1", []interface{}{testKey}); err != tcb.ErrOperationUnenforceable {
 		t.Error("Remove should return error but not returned or is not ErrOperationUnenforceable", err)
+		t.Fail()
+	}
+
+	t.Log("=== Case 4. N1qlQueryWithMode fail to execute query")
+	if _, err := o.N1qlQueryWithMode(gocb.RequestPlus, "ELECT * FROM default d WHERE meta(d).id = $1", []interface{}{testKey}); err == nil {
+		t.Error("N1qlQuery should return error but returned nil")
 		t.Fail()
 	}
 	_, _ = o.Remove(testKey)

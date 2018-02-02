@@ -147,7 +147,7 @@ func prepareOperator() tcb.Operatable {
 
 func prepareCluster() *tcb.Cluster {
 	config := tcb.Configure{
-		ConnectString: "couchbase://localhost",
+		ConnectString: "http://localhost:8091",
 		BucketConfigs: []tcb.BucketConfig{
 			tcb.BucketConfig{
 				Name:     "default",

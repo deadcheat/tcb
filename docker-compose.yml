@@ -7,7 +7,7 @@ services:
       replicas: 1
     environment:
       BUCKET_NAME: "default"
-      EXTRA_SLEEP: 30
+      EXTRA_SLEEP: 0
     ports:
       - 8091:8091
       - 8092:8092

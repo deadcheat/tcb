@@ -1,8 +1,5 @@
 # tcb
-[![Build Status](https://travis-ci.org/deadcheat/tcb.svg?branch=master)](https://travis-ci.org/deadcheat/tcb)[![Coverage Status](https://coveralls.io/repos/github/deadcheat/tcb/badge.svg?branch=master&service=github)](https://coveralls.io/github/deadcheat/tcb?branch=master)
-
-
-[![GoDoc](https://godoc.org/github.com/deadcheat/tcb?status.svg)](https://godoc.org/github.com/deadcheat/tcb)
+[![Build Status](https://travis-ci.org/deadcheat/tcb.svg?branch=master)](https://travis-ci.org/deadcheat/tcb) [![Coverage Status](https://coveralls.io/repos/github/deadcheat/tcb/badge.svg?branch=master&service=github)](https://coveralls.io/github/deadcheat/tcb?branch=master) [![GoDoc](https://godoc.org/github.com/deadcheat/tcb?status.svg)](https://godoc.org/github.com/deadcheat/tcb)
 
 takin' care of business
 

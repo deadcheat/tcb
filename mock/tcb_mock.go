@@ -70,11 +70,10 @@ func (mr *MockCouchBaseAdapterMockRecorder) AddBucket(bucket, password interface
 }
 
 // Bucket mocks base method
-func (m *MockCouchBaseAdapter) Bucket(name string) (*gocb.Bucket, error) {
+func (m *MockCouchBaseAdapter) Bucket(name string) *gocb.Bucket {
 	ret := m.ctrl.Call(m, "Bucket", name)
 	ret0, _ := ret[0].(*gocb.Bucket)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // Bucket indicates an expected call of Bucket
@@ -185,11 +184,10 @@ func (mr *MockConfigurableMockRecorder) AddBucket(bucket, password interface{}) 
 }
 
 // Bucket mocks base method
-func (m *MockConfigurable) Bucket(name string) (*gocb.Bucket, error) {
+func (m *MockConfigurable) Bucket(name string) *gocb.Bucket {
 	ret := m.ctrl.Call(m, "Bucket", name)
 	ret0, _ := ret[0].(*gocb.Bucket)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // Bucket indicates an expected call of Bucket
@@ -299,7 +297,7 @@ func (mr *MockOperatableMockRecorder) N1qlQuery(q, params interface{}) *gomock.C
 }
 
 // N1qlQueryWithMode mocks base method
-func (m *MockOperatable) N1qlQueryWithMode(mode *gocb.ConsistencyMode, q string, params interface{}) (gocb.QueryResults, error) {
+func (m *MockOperatable) N1qlQueryWithMode(mode gocb.ConsistencyMode, q string, params interface{}) (gocb.QueryResults, error) {
 	ret := m.ctrl.Call(m, "N1qlQueryWithMode", mode, q, params)
 	ret0, _ := ret[0].(gocb.QueryResults)
 	ret1, _ := ret[1].(error)

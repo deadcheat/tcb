@@ -18,8 +18,8 @@ before_install:
 install:
   - $GOPATH/bin/dep ensure
 script:
-  - docker-compose up
-  - docker-compose ps
+  - docker-compose up -d
+  - ./wait-for-it.sh 127.0.0.1:8091 -- sleep 30; echo "couchbase maybe up"
   - go test -v -covermode=count -coverprofile=tcb.coverprofile
   - $HOME/gopath/bin/gover
   - $HOME/gopath/bin/goveralls -coverprofile=gover.coverprofile -service=travis-ci

@@ -1,43 +1,44 @@
 package tcb
 
-import "log"
+import (
+	"log"
+	"os"
+)
 
 // SilentLogger logger say noting
 type SilentLogger struct{}
 
 // Log but say nothing
 func (s *SilentLogger) Log(v ...interface{}) {
-	if s == nil {
-		return
-	}
+	return
 }
 
 // Logf but say nothing with format either
 func (s *SilentLogger) Logf(f string, v ...interface{}) {
-	if s == nil {
-		return
-	}
+	return
 }
 
 // DefaultLogger type-default logger
 type DefaultLogger struct {
 	enabled bool
+	Logger  *log.Logger
 }
 
 // NewDefaultDisabledLogger Generate New Silent Logger
-func NewDefaultDisabledLogger() Loggerable {
+func NewDefaultDisabledLogger() *DefaultLogger {
 	return newDefaultLogger(false)
 }
 
 // NewDefaultActiveLogger Generate New Silent Logger
-func NewDefaultActiveLogger() Loggerable {
-	return newDefaultLogger(false)
+func NewDefaultActiveLogger() *DefaultLogger {
+	return newDefaultLogger(true)
 }
 
 // newDefaultLogger Generate New Logger
-func newDefaultLogger(enabled bool) Loggerable {
+func newDefaultLogger(enabled bool) *DefaultLogger {
 	return &DefaultLogger{
 		enabled: enabled,
+		Logger:  log.New(os.Stderr, "", log.LstdFlags),
 	}
 }
 
@@ -52,13 +53,13 @@ func (d *DefaultLogger) LogEnabled() bool {
 // Log logging with log-package
 func (d *DefaultLogger) Log(v ...interface{}) {
 	if d.LogEnabled() {
-		log.Println(v...)
+		d.Logger.Println(v...)
 	}
 }
 
 // Logf logging with format using log-package
 func (d *DefaultLogger) Logf(f string, v ...interface{}) {
 	if d.LogEnabled() {
-		log.Printf(f, v...)
+		d.Logger.Printf(f, v...)
 	}
 }

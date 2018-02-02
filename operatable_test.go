@@ -13,6 +13,7 @@ func TestGet(t *testing.T) {
 	o := prepareOperator()
 
 	testKey := "test1"
+	_, _ = o.Remove(testKey)
 	var dummy interface{}
 	if _, err := o.Get(testKey, dummy); err == nil {
 		t.Error("Get should return error but not returned")
@@ -45,6 +46,7 @@ func TestInsertAndUpsert(t *testing.T) {
 	o := prepareOperator()
 
 	testKey := "test2"
+	_, _ = o.Remove(testKey)
 	testData := 1000
 	if _, err := o.Insert(testKey, testData, 0); err != nil {
 		t.Error("Insert should not return error but returned ", err)
@@ -76,6 +78,7 @@ func TestRemove(t *testing.T) {
 
 	testKey := "test3"
 	testData := 1000
+	_, _ = o.Remove(testKey)
 	_, _ = o.Insert(testKey, testData, 0)
 	if _, err := o.Remove(testKey); err != nil {
 		t.Error("Remove should not return error but returned ", err)
@@ -135,7 +138,10 @@ func TestN1qlQuery(t *testing.T) {
 }
 func prepareOperator() tcb.Operatable {
 	c := prepareCluster()
-	o, _ := c.Operator("default")
+	o, err := c.Operator("default")
+	if err != nil {
+		panic(err)
+	}
 	return o
 }
 
@@ -152,6 +158,8 @@ func prepareCluster() *tcb.Cluster {
 		Password: "password",
 	}
 	c := tcb.NewCluster(config)
-	_ = c.Open()
+	if err := c.Open(); err != nil {
+		panic(err)
+	}
 	return c
 }

@@ -18,7 +18,7 @@ before_install:
 install:
   - $GOPATH/bin/dep ensure
 script:
-  - docker-compose up -d
+  - docker-compose up
   - docker-compose ps
   - go test -v -covermode=count -coverprofile=tcb.coverprofile
   - $HOME/gopath/bin/gover

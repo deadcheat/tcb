@@ -136,7 +136,7 @@ func TestN1qlQuery(t *testing.T) {
 	}
 	_, _ = o.Remove(testKey)
 }
-func prepareOperator() tcb.Operatable {
+func prepareOperator() tcb.Operator {
 	c := prepareCluster()
 	o, err := c.Operator("default")
 	if err != nil {

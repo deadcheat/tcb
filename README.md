@@ -48,6 +48,7 @@ func main() {
 	if err := c.Open(); err != nil {
 		panic(err)
 	}
+	defer c.CloseAll()
 	o, _ := c.Operator("default")
 	data := Data{
 		Text: "TestData",

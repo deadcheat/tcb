@@ -6,14 +6,14 @@ import (
 	"github.com/couchbase/gocb"
 )
 
-// BucketOperator operatable instance
+// BucketOperator Operator instance
 type BucketOperator struct {
 	Bucket *gocb.Bucket
-	Loggerable
+	Logger
 }
 
-// NewBucketOperator return new operatable instance
-func NewBucketOperator(b *gocb.Bucket, l Loggerable) *BucketOperator {
+// NewBucketOperator return new Operator instance
+func NewBucketOperator(b *gocb.Bucket, l Logger) *BucketOperator {
 	return &BucketOperator{b, l}
 }
 

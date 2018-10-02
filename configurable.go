@@ -22,7 +22,7 @@ type Configure struct {
 // Cluster to connect couchbase
 type Cluster struct {
 	Configure
-	Loggerable
+	Logger
 	cluster   *gocb.Cluster
 	bucketMap map[string]*gocb.Bucket
 }
@@ -36,7 +36,7 @@ type BucketConfig struct {
 // NewCluster return new instance
 func NewCluster(c Configure) *Cluster {
 	bm := make(map[string]*gocb.Bucket)
-	return &Cluster{Configure: c, Loggerable: NewDefaultActiveLogger(), bucketMap: bm}
+	return &Cluster{Configure: c, Logger: NewDefaultActiveLogger(), bucketMap: bm}
 }
 
 // Open call this to open cluster connection
@@ -104,11 +104,11 @@ func (a *Cluster) Bucket(bucket string) *gocb.Bucket {
 }
 
 // Operator return operator instance
-func (a *Cluster) Operator(bucket string) (Operatable, error) {
+func (a *Cluster) Operator(bucket string) (Operator, error) {
 	b := a.Bucket(bucket)
 	if b == nil {
 		return nil, ErrBucketMissing
 	}
 
-	return NewBucketOperator(b, a.Loggerable), nil
+	return NewBucketOperator(b, a.Logger), nil
 }

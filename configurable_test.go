@@ -77,7 +77,7 @@ func TestOpenAndAddBucket(t *testing.T) {
 }
 
 func TestOperator(t *testing.T) {
-	t.Log("=== Case 1. Operator should return operatable instance successfully")
+	t.Log("=== Case 1. Operator should return Operator instance successfully")
 	config := tcb.Configure{
 		ConnectString: "http://localhost:8091",
 		BucketConfigs: []tcb.BucketConfig{
@@ -91,7 +91,7 @@ func TestOperator(t *testing.T) {
 	}
 	c := tcb.NewCluster(config)
 	_ = c.Open()
-	var o tcb.Operatable
+	var o tcb.Operator
 	var err error
 	o, err = c.Operator("default")
 	if err != nil || o == nil {

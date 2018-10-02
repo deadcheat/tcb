@@ -13,6 +13,8 @@ type CouchBaseAdapter interface {
 // Configurable governs for configure and open connect
 type Configurable interface {
 	Open() error
+	Close(bucket string) error
+	CloseAll() error
 	Cluster() *gocb.Cluster
 	AddBucket(bucket, password string) (*gocb.Bucket, error)
 	Bucket(name string) *gocb.Bucket

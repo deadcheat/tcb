@@ -60,6 +60,25 @@ func (a *Cluster) Open() error {
 	return nil
 }
 
+// Close closes specified bucket
+func (a *Cluster) Close(bucket string) error {
+	b := a.Bucket(bucket)
+	if b == nil {
+		return ErrBucketMissing
+	}
+	return b.Close()
+}
+
+// CloseAll closes all buckets
+func (a *Cluster) CloseAll() error {
+	for name := range a.bucketMap {
+		if err := a.Close(name); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Cluster return inner cluster instance
 func (a *Cluster) Cluster() *gocb.Cluster {
 	return a.cluster
